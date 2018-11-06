@@ -1,5 +1,11 @@
 #include <iostream>
 #include <regex>
+#include <getopt.h>
+
+int cFlag = 0;
+int sFlag = 0;
+int tFlag = 0;
+int fFlag = 0;
 
 template<typename T>
 std::ostream& operator<<(std::ostream& s, const std::vector<T>& v) {
@@ -15,12 +21,17 @@ std::ostream& operator<<(std::ostream& s, const std::vector<T>& v) {
 std::ostringstream generateOutput(const std::vector<unsigned long> &a) {
 	std::ostringstream output;
 
+	if (sFlag != 0) {
+		output << a;
+		return output;
+	}
+
 	output << "asm volatile (\n";
 	for (int i = 0; i < a.size() - 1; i++){
 		output << "\t\"\tldi  r" << i + 16 << ", " << a[i] << "\t\\n\"\n";
 	}
 	for (int i = 0; i < a.size() - 1; i++){
-		output << "\t\"" << (i == 0 ? "L:" : "") << "\tdec  r" << a.size() + 15 - i << "\t\t\\n\"\n";
+		output << "\t\"" << (i == 0 ? "L:" : "") << "\tdec  r" << a.size() + 14 - i << "\t\t\\n\"\n";
 		output << "\t\"\tbrne L\t\t\t\\n\"\n";
 	}
 	for (int i = 0; i < a[a.size() - 1]; i++){
@@ -76,11 +87,26 @@ unsigned long calculateDelay(const std::vector<unsigned long> &a) {
 	return actual;
 }
 
-int main(int argc, char **argv){
-	if (argc < 3){
-		std::cerr << "Usage: assembly-delayloop <TIME> <CLOCK>" << std::endl;
-		exit(1);
+void verify(const std::vector<unsigned long> &a, unsigned long cycles) {
+	if (calculateDelay(a) != cycles){
+		std::cerr << "Error" << std::endl;
+		std::cerr << "Expected: " << cycles << std::endl;
+		std::cerr << "Actual: " << calculateDelay(a) << std::endl;
 	}
+}
+
+int main(int argc, char **argv){
+
+	unsigned long cycles = 0;
+	double time          = 0;
+	double frequency     = 0;
+
+	std::regex pattern = std::regex("([0-9]+\\.?[0-9]*)([^0-9]?)(Hz|s|min|h|d)?");
+	std::cmatch cmatchTime;
+	std::cmatch cmatchFreq;
+	std::regex_search(argv[1], cmatchTime, pattern);
+	std::regex_search(argv[2], cmatchFreq, pattern);
+
 	std::map<std::string, int> prefixes{
 			{ "P", 15 },
 			{ "T", 12 },
@@ -99,29 +125,73 @@ int main(int argc, char **argv){
 			{ "h", 60 * 60 },
 			{ "d", 60 * 60 * 24 }};
 
-	std::regex pattern = std::regex("([0-9]+\\.?[0-9]*)([^0-9]?)(Hz|s|min|h|d)?");
-	std::cmatch cmatchTime;
-	std::cmatch cmatchFreq;
-	std::regex_search(argv[1], cmatchTime, pattern);
-	std::regex_search(argv[2], cmatchFreq, pattern);
+	int c;
+	while (true) {
+		int option_index = 0;
+		static struct option long_options[] = {
+				{ "cycles", required_argument, nullptr, 'c' },
+				{ "short", no_argument, nullptr, 's' },
+				{ "help", no_argument, nullptr, 'h' },
+				{ "time", no_argument, nullptr, 't' },
+				{ "frequency", no_argument, nullptr, 'f' }
+		};
+		c = getopt_long(argc, argv, "c:sht:f:", long_options, &option_index);
+		if (c == -1) {
+			break;
+		}
+		switch (c) {
+			case 'c':
+				std::cout << "option cycles with value '" << optarg << "'" << std::endl;
+				cycles = std::stoul(optarg);
+				cFlag = 1;
+				break;
+			case 's':
+				std::cout << "option short" << std::endl;
+				sFlag = 1;
+				break;
+			case 'h':
+				std::cout << "option help" << std::endl;
+				std::cerr << "Usage message" << std::endl;
+				break;
+			case 't':
+				std::cout << "option time with value '" << optarg << "'" << std::endl;
+				std::regex_search(optarg, cmatchTime, pattern);
+				time = std::stod(cmatchTime[1].str()) * correctTime[cmatchTime[3].str()];
+				tFlag = 1;
+				break;
+			case 'f':
+				std::cout << "option frequency with value '" << optarg << "'" << std::endl;
+				std::regex_search(optarg, cmatchFreq, pattern);
+				frequency = std::stod(cmatchFreq[1].str());
+				fFlag = 1;
+				break;
+			default:
+				std::cerr << "Usage message" << std::endl;
+		}
+	}
 
-	double time = std::stod(cmatchTime[1].str());
-	double frequency = std::stod(cmatchFreq[1].str());
+	if(cFlag == 0) {
+		if (optind < argc) {
+			if (tFlag == 0){
+				std::regex_search(argv[optind++], cmatchTime, pattern);
+				time = std::stod(cmatchTime[1].str()) * correctTime[cmatchTime[3].str()];
+			}
+			if (fFlag == 0) {
+				std::regex_search(argv[optind++], cmatchFreq, pattern);
+				frequency = std::stod(cmatchFreq[1].str());
+			}
+		}
+		cycles = static_cast<unsigned long>(time * frequency * std::pow(10, prefixes[cmatchTime[2].str()] + prefixes[cmatchFreq[2].str()]));
+	}
 
-	unsigned long cycles = static_cast<unsigned long>(time * correctTime[cmatchTime[3].str()] * frequency * std::pow(10, prefixes[cmatchTime[2].str()] + prefixes[cmatchFreq[2].str()]));
-//	unsigned long cycles = 480000000009;
 	int n = nestedLoopsRequired(cycles);
 	cycles -= n - 1;
 
 	std::vector<unsigned long> a = calculateLoop(n, cycles);
 
-	if (calculateDelay(a) != cycles + n - 1){
-		std::cerr << "Error" << std::endl;
-		std::cerr << "Expected: " << cycles + n - 1 << std::endl;
-		std::cerr << "Actual: " << calculateDelay(a) << std::endl;
-	}
+	verify(a, cycles + n - 1);
+
 	std::cout << generateOutput(a).str() << std::endl;
-//	std::cout << a << std::endl;
 
 	return 0;
 }
