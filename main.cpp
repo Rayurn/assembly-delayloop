@@ -137,6 +137,7 @@ int main(int argc, char **argv){
 			{ "G", 9 },
 			{ "M", 6 },
 			{ "k", 3 },
+			{ "0", 0 },
 			{ "m", -3 },
 			{ "u", -6 },
 			{ "n", -9 },
@@ -175,11 +176,12 @@ int main(int argc, char **argv){
 			case 'h':
 				printUsageMessage();
 				exit(0);
-			case 't':
+			case 't': {
 				std::regex_search(optarg, cmatchTime, pattern);
-				time = std::stod(cmatchTime[1].str()) * correctTime[cmatchTime[3].str()];
+				std::string s = cmatchTime[3].str().empty() ? cmatchTime[2].str() : cmatchTime[3].str();
+				time = std::stod(cmatchTime[1].str()) * correctTime[s];
 				tFlag = 1;
-				break;
+				break;}
 			case 'f':
 				std::regex_search(optarg, cmatchFreq, pattern);
 				frequency = std::stod(cmatchFreq[1].str());
@@ -190,21 +192,40 @@ int main(int argc, char **argv){
 				break;
 			default:
 				std::cerr << "Invalid command, see 'assembly-delayloop --help' for usage" << std::endl;
+				exit(1);
 		}
+	}
+
+	if (cFlag == 0 && (tFlag == 1 || fFlag == 1)){
+		std::cerr << "Invalid command, see 'assembly-delayloop --help' for usage" << std::endl;
+		exit(1);
 	}
 
 	if(cFlag == 0) {
 		if (optind < argc) {
 			if (tFlag == 0){
 				std::regex_search(argv[optind++], cmatchTime, pattern);
-				time = std::stod(cmatchTime[1].str()) * correctTime[cmatchTime[3].str()];
+				std::string s = cmatchTime[3].str().empty() ? cmatchTime[2].str() : cmatchTime[3].str();
+				time = std::stod(cmatchTime[1].str()) * correctTime[s];
 			}
 			if (fFlag == 0) {
 				std::regex_search(argv[optind++], cmatchFreq, pattern);
 				frequency = std::stod(cmatchFreq[1].str());
 			}
 		}
-		cycles = static_cast<unsigned long>(time * frequency * std::pow(10, prefixes[cmatchTime[2].str()] + prefixes[cmatchFreq[2].str()]));
+		int timePrefix = 0;
+		int frequencyPrefix = 0;
+		if (cmatchTime[3].str().empty()) {
+			timePrefix = prefixes["0"];
+		} else {
+			timePrefix = prefixes[cmatchTime[2].str()];
+		}
+		if (cmatchFreq[3].str().empty()) {
+			frequencyPrefix = prefixes["0"];
+		} else {
+			frequencyPrefix = prefixes[cmatchFreq[2].str()];
+		}
+		cycles = static_cast<unsigned long>(time * frequency * std::pow(10, timePrefix + frequencyPrefix));
 	}
 
 	int n = nestedLoopsRequired(cycles);
