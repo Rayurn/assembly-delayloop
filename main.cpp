@@ -1,6 +1,4 @@
-#include <iostream>
-#include <regex>
-#include <getopt.h>
+#include "main.h"
 
 int cFlag = 0;
 int sFlag = 0;
@@ -19,12 +17,12 @@ std::ostream& operator<<(std::ostream& s, const std::vector<T>& v) {
 	return s << ']';
 }
 
-std::ostringstream generateOutput(const std::vector<unsigned long> &a) {
+std::string generateOutput(const std::vector<unsigned long> &a) {
 	std::ostringstream output;
 
 	if (sFlag != 0) {
 		output << a;
-		return output;
+		return output.str();
 	}
 
 	output << "asm volatile (\n";
@@ -41,7 +39,7 @@ std::ostringstream generateOutput(const std::vector<unsigned long> &a) {
 
 	output << ");";
 
-	return output;
+	return output.str();
 }
 
 unsigned long maxDelay(int n) {
@@ -105,8 +103,6 @@ int main(int argc, char **argv){
 	std::regex pattern = std::regex("([0-9]+\\.?[0-9]*)([^0-9]?)(Hz|s|min|h|d)?");
 	std::cmatch cmatchTime;
 	std::cmatch cmatchFreq;
-	std::regex_search(argv[1], cmatchTime, pattern);
-	std::regex_search(argv[2], cmatchFreq, pattern);
 
 	std::map<std::string, int> prefixes{
 			{ "P", 15 },
@@ -143,32 +139,26 @@ int main(int argc, char **argv){
 		}
 		switch (c) {
 			case 'c':
-				std::cout << "option cycles with value '" << optarg << "'" << std::endl;
 				cycles = std::stoul(optarg);
 				cFlag = 1;
 				break;
 			case 's':
-				std::cout << "option short" << std::endl;
 				sFlag = 1;
 				break;
 			case 'h':
-				std::cout << "option help" << std::endl;
 				std::cerr << "Usage message" << std::endl;
 				break;
 			case 't':
-				std::cout << "option time with value '" << optarg << "'" << std::endl;
 				std::regex_search(optarg, cmatchTime, pattern);
 				time = std::stod(cmatchTime[1].str()) * correctTime[cmatchTime[3].str()];
 				tFlag = 1;
 				break;
 			case 'f':
-				std::cout << "option frequency with value '" << optarg << "'" << std::endl;
 				std::regex_search(optarg, cmatchFreq, pattern);
 				frequency = std::stod(cmatchFreq[1].str());
 				fFlag = 1;
 				break;
 			case 'r':
-				std::cout << "option register with value '" << optarg << "'" << std::endl;
 				rFlag = std::stoi(optarg);
 				break;
 			default:
@@ -197,7 +187,7 @@ int main(int argc, char **argv){
 
 	verify(a, cycles + n - 1);
 
-	std::cout << generateOutput(a).str() << std::endl;
+	std::cout << generateOutput(a) << std::endl;
 
 	return 0;
 }
