@@ -6,6 +6,7 @@ int cFlag = 0;
 int sFlag = 0;
 int tFlag = 0;
 int fFlag = 0;
+int rFlag = 16;
 
 template<typename T>
 std::ostream& operator<<(std::ostream& s, const std::vector<T>& v) {
@@ -28,10 +29,10 @@ std::ostringstream generateOutput(const std::vector<unsigned long> &a) {
 
 	output << "asm volatile (\n";
 	for (int i = 0; i < a.size() - 1; i++){
-		output << "\t\"\tldi  r" << i + 16 << ", " << a[i] << "\t\\n\"\n";
+		output << "\t\"\tldi  r" << i + rFlag << ", " << a[i] << "\t\\n\"\n";
 	}
 	for (int i = 0; i < a.size() - 1; i++){
-		output << "\t\"" << (i == 0 ? "L:" : "") << "\tdec  r" << a.size() + 14 - i << "\t\t\\n\"\n";
+		output << "\t\"" << (i == 0 ? "L:" : "") << "\tdec  r" << a.size() + rFlag - 2 - i << "\t\t\\n\"\n";
 		output << "\t\"\tbrne L\t\t\t\\n\"\n";
 	}
 	for (int i = 0; i < a[a.size() - 1]; i++){
@@ -129,13 +130,14 @@ int main(int argc, char **argv){
 	while (true) {
 		int option_index = 0;
 		static struct option long_options[] = {
-				{ "cycles", required_argument, nullptr, 'c' },
-				{ "short", no_argument, nullptr, 's' },
-				{ "help", no_argument, nullptr, 'h' },
-				{ "time", no_argument, nullptr, 't' },
-				{ "frequency", no_argument, nullptr, 'f' }
+				{ "cycles",     required_argument,  nullptr, 'c' },
+				{ "short",      no_argument,        nullptr, 's' },
+				{ "help",       no_argument,        nullptr, 'h' },
+				{ "time",       required_argument,  nullptr, 't' },
+				{ "frequency",  required_argument,  nullptr, 'f' },
+				{ "register",   required_argument,  nullptr, 'r' }
 		};
-		c = getopt_long(argc, argv, "c:sht:f:", long_options, &option_index);
+		c = getopt_long(argc, argv, "c:sht:f:r:", long_options, &option_index);
 		if (c == -1) {
 			break;
 		}
@@ -164,6 +166,10 @@ int main(int argc, char **argv){
 				std::regex_search(optarg, cmatchFreq, pattern);
 				frequency = std::stod(cmatchFreq[1].str());
 				fFlag = 1;
+				break;
+			case 'r':
+				std::cout << "option register with value '" << optarg << "'" << std::endl;
+				rFlag = std::stoi(optarg);
 				break;
 			default:
 				std::cerr << "Usage message" << std::endl;
