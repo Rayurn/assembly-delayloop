@@ -61,14 +61,35 @@ int main(int argc, char **argv){
 		std::cout << "Usage: assembly-delayloop <TIME> <CLOCK>" << std::endl;
 		exit(1);
 	}
-//	std::regex pattern = std::regex("([0-9]+)([^0-9]?)(Hz|s)?");
-//	std::cmatch cmatch;
-//	std::regex_search(argv[1], cmatch, pattern);
 
-	unsigned long time = std::strtoul(argv[1], nullptr, 10);
-	unsigned long frequency = std::strtoul(argv[2], nullptr, 10) * 1000000;
+	std::map<std::string, int> prefixes{
+			{ "P", 15 },
+			{ "T", 12 },
+			{ "G", 9 },
+			{ "M", 6 },
+			{ "k", 3 },
+			{ "m", -3 },
+			{ "u", -6 },
+			{ "n", -9 },
+			{ "p", -12 },
+			{ "f", -15 }};
 
-	unsigned long cycles = time * frequency;
+	std::map<std::string, int> correctTime{
+			{ "s", 1 },
+			{ "min", 60 },
+			{ "h", 60 * 60 },
+			{ "d", 60 * 60 * 24 }};
+
+	std::regex pattern = std::regex("([0-9]+\\.?[0-9]*)([^0-9]?)(Hz|s|min|h|d)?");
+	std::cmatch cmatchTime;
+	std::cmatch cmatchFreq;
+	std::regex_search(argv[1], cmatchTime, pattern);
+	std::regex_search(argv[2], cmatchFreq, pattern);
+
+	double time = std::stod(cmatchTime[1].str());
+	double frequency = std::stod(cmatchFreq[1].str());
+
+	unsigned long cycles = static_cast<unsigned long>(time * correctTime[cmatchTime[3].str()] * frequency * std::pow(10, prefixes[cmatchTime[2].str()] + prefixes[cmatchFreq[2].str()]));
 //	unsigned long cycles = 480000000009;
 	int n = nestedLoopsRequired(cycles);
 	cycles -= n - 1;
@@ -89,7 +110,8 @@ int main(int argc, char **argv){
 	if (!verify(a, additionalCycles, cycles + n - 1)){
 		exit(2);
 	}
-	std::cout << generateOutput(a, additionalCycles).str() << std::endl;
+//	std::cout << generateOutput(a, additionalCycles).str() << std::endl;
+	std::cout << a << " + " << -additionalCycles << std::endl;
 
 	return 0;
 }
