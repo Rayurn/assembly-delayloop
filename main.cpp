@@ -162,7 +162,7 @@ int main(int argc, char **argv){
 				rFlag = std::stoi(optarg);
 				break;
 			default:
-				std::cerr << "Usage message" << std::endl;
+				std::cerr << "Invalid command, see 'assembly-delayloop --help' for usage" << std::endl;
 		}
 	}
 
