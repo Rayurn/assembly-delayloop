@@ -7,14 +7,14 @@ required time.
 ## Usage
 
 There are several commandline flags available:
-
--c/--cycles     To use a number of clock cycles as input. Don't use together with -t or -f.<br />
--t/--time       To specify which argument is the time, by default it is the left one.<br />
--f/--frequency  To specify which argument is the frequency, by default it is the right one.<br />
--s/--short      Gives only the loop parameters as output. the last element is the number of additional nop instructions.<br />
--r/--register   To choose which registers to use, default is 16.<br />
--h/--help       Display usage, and information on the commandline flags.<br />
-
+```
+-c/--cycles     To use a number of clock cycles as input. Don't use together with -t or -f.
+-t/--time       To specify which argument is the time, by default it is the left one.
+-f/--frequency  To specify which argument is the frequency, by default it is the right one.
+-s/--short      Gives only the loop parameters as output. the last element is the number of additional nop instructions.
+-r/--register   To choose which registers to use, default is 16.
+-h/--help       Display usage, and information on the commandline flags.
+```
 When using time and frequency, units are required while SI-prefixes are optional. Units for time are seconds(s), minutes(min),
 hours(h) and days(d); frequency is in Hz. SI-prefixes are available from femto to Peta.
 
