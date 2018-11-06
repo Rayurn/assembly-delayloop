@@ -12,6 +12,26 @@ std::ostream& operator<<(std::ostream& s, const std::vector<T>& v) {
 	return s << ']';
 }
 
+std::ostringstream generateOutput(const std::vector<unsigned long> &a, long additionalCycles) {
+	std::ostringstream output;
+
+	output << "asm volatile (\n";
+	for (int i = 0; i < a.size(); i++){
+		output << "\t\"\tldi  r" << i + 16 << ", " << a[i] << "\t\\n\"\n";
+	}
+	for (int i = 0; i < a.size(); i++){
+		output << "\t\"" << (i == 0 ? "L:" : "") << "\tdec  r" << a.size() + 15 - i << "\t\t\\n\"\n";
+		output << "\t\"\tbrne L\t\t\t\\n\"\n";
+	}
+	for (int i = 0; i < -additionalCycles; i++){
+		output << "\t\"\tnop\t\t\t\t\\n\"\n";
+	}
+
+	output << ");";
+
+	return output;
+}
+
 unsigned long maxDelay(int n) {
 	if (n < 1) {
 		return 3;
@@ -69,7 +89,7 @@ int main(int argc, char **argv){
 	if (!verify(a, additionalCycles, cycles + n - 1)){
 		exit(2);
 	}
-	std::cout << a << std::endl;
+	std::cout << generateOutput(a, additionalCycles).str() << std::endl;
 
 	return 0;
 }
