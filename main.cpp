@@ -17,6 +17,33 @@ std::ostream& operator<<(std::ostream& s, const std::vector<T>& v) {
 	return s << ']';
 }
 
+void printUsageMessage() {
+	std::cout << "More info: https://github.com/Rayurn/assembly-delayloop" << std::endl << std::endl;
+
+	std::cout << "-c/--cycles     To use a number of clock cycles as input. Don't use together with -t or -f." << std::endl;
+	std::cout << "-t/--time       To specify which argument is the time, by default it is the left one." << std::endl;
+	std::cout << "-f/--frequency  To specify which argument is the frequency, by default it is the right one." << std::endl;
+	std::cout << "-s/--short      Gives only the loop parameters as output. the last element is the number of additional nop instructions." << std::endl;
+	std::cout << "-r/--register   To choose which registers to use, default is 16." << std::endl;
+	std::cout << "-h/--help       Display usage, and information on the commandline flags." << std::endl << std::endl;
+
+	std::cout << "When using time and frequency, units are required while SI-prefixes are optional. Units for time are seconds(s), minutes(min)," << std::endl;
+	std::cout << "hours(h) and days(d); frequency is in Hz. SI-prefixes are available from femto to Peta." << std::endl << std::endl;
+
+	std::cout << "Examples:" << std::endl << std::endl;
+	std::cout << "Default case" << std::endl;
+	std::cout << "assembly-delayloop 500ms 16MHz" << std::endl << std::endl;
+
+	std::cout << "Shortened output" << std::endl;
+	std::cout << "assembly-delayloop 500ms 16MHz -s" << std::endl << std::endl;
+
+	std::cout << "Input clock cycles instead of time and frequency" << std::endl;
+	std::cout << "assembly-delayloop -c 16000000" << std::endl << std::endl;
+
+	std::cout << "Specify the argument for time and set starting register to 20" << std::endl;
+	std::cout << "assembly-delayloop 16MHz -t 500ms -r 20" << std::endl << std::endl;
+}
+
 std::string generateOutput(const std::vector<unsigned long> &a) {
 	std::ostringstream output;
 
@@ -146,8 +173,8 @@ int main(int argc, char **argv){
 				sFlag = 1;
 				break;
 			case 'h':
-				std::cerr << "Usage message" << std::endl;
-				break;
+				printUsageMessage();
+				exit(0);
 			case 't':
 				std::regex_search(optarg, cmatchTime, pattern);
 				time = std::stod(cmatchTime[1].str()) * correctTime[cmatchTime[3].str()];
@@ -189,5 +216,5 @@ int main(int argc, char **argv){
 
 	std::cout << generateOutput(a) << std::endl;
 
-	return 0;
+	exit(0);
 }

@@ -15,7 +15,7 @@ There are several commandline flags available:
 -r/--register   To choose which registers to use, default is 16.
 -h/--help       Display usage, and information on the commandline flags.
 
-If using time and frequency, units are required while SI-prefixes are optional. Units for time are seconds(s), minutes(min),
+When using time and frequency, units are required while SI-prefixes are optional. Units for time are seconds(s), minutes(min),
 hours(h) and days(d); frequency is in Hz. SI-prefixes are available from femto to Peta.
 
 ## Examples

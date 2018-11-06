@@ -9,6 +9,12 @@ template<typename T>
 std::ostream& operator<<(std::ostream& s, const std::vector<T>& v);
 
 /**
+ * @brief			Prints information about this tool. This function is called when the --help flag is used.
+ * @author 			Christopher Field
+ */
+void printUsageMessage();
+
+/**
  *
  * @brief 			Translates the input vector into an std::string of the full inline assembler code or only the loop
  * 					parameters, depending on the -s or --short flag.
