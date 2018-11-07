@@ -16,7 +16,7 @@ There are several commandline flags available:
 -h/--help       Display usage, and information on the commandline flags.
 ```
 When using time and frequency, units are required while SI-prefixes are optional. Units for time are seconds(s), minutes(min),
-hours(h) and days(d); frequency is in Hz. SI-prefixes are available from femto to Peta.
+hours(h) and days(d); frequency is in Hz. SI-prefixes are available from femto to Peta (for micro, instead of 'μ' use 'u').
 
 ## Building
 
