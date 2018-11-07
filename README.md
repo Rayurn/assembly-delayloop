@@ -18,6 +18,15 @@ There are several commandline flags available:
 When using time and frequency, units are required while SI-prefixes are optional. Units for time are seconds(s), minutes(min),
 hours(h) and days(d); frequency is in Hz. SI-prefixes are available from femto to Peta.
 
+## Building
+
+```
+git clone https://github.com/Rayurn/assembly-delayloop.git
+cd assembly-delayloop
+make
+sudo ./install.sh
+```
+
 ## Examples
 
 ```
