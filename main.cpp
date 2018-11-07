@@ -61,7 +61,7 @@ std::string generateOutput(const std::vector<unsigned long> &a) {
 		output << "\t\"\tbrne L\t\t\\n\"\n";
 	}
 	for (int i = 0; i < a[a.size() - 1]; i++){
-		output << "\t\"\tnop\t\t\t\t\\n\"\n";
+		output << "\t\"\tnop\t\t\\n\"\n";
 	}
 
 	output << ");";
@@ -131,7 +131,7 @@ int main(int argc, char **argv){
 	double time          = 0;
 	double frequency     = 0;
 
-	std::regex pattern = std::regex("([0-9]+\\.?[0-9]*)([^0-9]?)(Hz|s|min|h|d)?");
+	std::regex pattern = std::regex("([0-9]+\\.?[0-9]*)([^0-9(?!Hz|s|min|h|d)]?)(Hz|s|min|h|d)?");
 	std::cmatch cmatchTime;
 	std::cmatch cmatchFreq;
 
@@ -182,8 +182,7 @@ int main(int argc, char **argv){
 				exit(0);
 			case 't': {
 				std::regex_search(optarg, cmatchTime, pattern);
-				std::string s = cmatchTime[3].str().empty() ? cmatchTime[2].str() : cmatchTime[3].str();
-				time = std::stod(cmatchTime[1].str()) * correctTime[s];
+				time = std::stod(cmatchTime[1].str()) * correctTime[cmatchTime[3].str()];
 				tFlag = 1;
 				break;}
 			case 'f':
@@ -209,8 +208,7 @@ int main(int argc, char **argv){
 		if (optind < argc) {
 			if (tFlag == 0){
 				std::regex_search(argv[optind++], cmatchTime, pattern);
-				std::string s = cmatchTime[3].str().empty() ? cmatchTime[2].str() : cmatchTime[3].str();
-				time = std::stod(cmatchTime[1].str()) * correctTime[s];
+				time = std::stod(cmatchTime[1].str()) * correctTime[cmatchTime[3].str()];
 			}
 			if (fFlag == 0) {
 				std::regex_search(argv[optind++], cmatchFreq, pattern);
