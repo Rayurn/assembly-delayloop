@@ -3,6 +3,7 @@
 
 #include <iostream>
 #include <regex>
+#include <cmath>
 #include <getopt.h>
 
 template<typename T>

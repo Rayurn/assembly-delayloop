@@ -225,7 +225,7 @@ int main(int argc, char **argv){
 		} else {
 			frequencyPrefix = prefixes[cmatchFreq[2].str()];
 		}
-		cycles = static_cast<unsigned long>(time * frequency * std::pow(10, timePrefix + frequencyPrefix));
+		cycles = static_cast<unsigned long>(time * frequency * pow(10, timePrefix + frequencyPrefix));
 	}
 
 	int n = nestedLoopsRequired(cycles);
