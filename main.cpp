@@ -199,7 +199,7 @@ int main(int argc, char **argv){
 		}
 	}
 
-	if (cFlag == 0 && (tFlag == 1 || fFlag == 1)){
+	if (cFlag == 1 && (tFlag == 1 || fFlag == 1)){
 		std::cerr << "Invalid command, see 'assembly-delayloop --help' for usage" << std::endl;
 		exit(1);
 	}
