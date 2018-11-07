@@ -28,6 +28,8 @@ sudo ./install.sh
 ```
 `sudo ./install.sh` is not required, but enables you to run this tool from anywhere on your system. 
 
+For Windows download the executable and run it in cmd or Powershell.
+
 ## Examples
 
 ```
