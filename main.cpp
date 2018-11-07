@@ -57,8 +57,8 @@ std::string generateOutput(const std::vector<unsigned long> &a) {
 		output << "\t\"\tldi  r" << i + rFlag << ", " << a[i] << "\t\\n\"\n";
 	}
 	for (int i = 0; i < a.size() - 1; i++){
-		output << "\t\"" << (i == 0 ? "L:" : "") << "\tdec  r" << a.size() + rFlag - 2 - i << "\t\t\\n\"\n";
-		output << "\t\"\tbrne L\t\t\t\\n\"\n";
+		output << "\t\"" << (i == 0 ? "L:" : "") << "\tdec  r" << a.size() + rFlag - 2 - i << "\t\\n\"\n";
+		output << "\t\"\tbrne L\t\t\\n\"\n";
 	}
 	for (int i = 0; i < a[a.size() - 1]; i++){
 		output << "\t\"\tnop\t\t\t\t\\n\"\n";
