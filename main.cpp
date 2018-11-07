@@ -28,20 +28,20 @@ void printUsageMessage() {
 	std::cout << "-h/--help       Display usage, and information on the commandline flags." << std::endl << std::endl;
 
 	std::cout << "When using time and frequency, units are required while SI-prefixes are optional. Units for time are seconds(s), minutes(min)," << std::endl;
-	std::cout << "hours(h) and days(d); frequency is in Hz. SI-prefixes are available from femto to Peta." << std::endl << std::endl;
+	std::cout << "hours(h) and days(d); frequency is in Hz. SI-prefixes are available from femto to Peta (for micro, instead of 'μ' use 'u')." << std::endl << std::endl;
 
 	std::cout << "Examples:" << std::endl << std::endl;
 	std::cout << "Default case" << std::endl;
-	std::cout << "assembly-delayloop 500ms 16MHz" << std::endl << std::endl;
+	std::cout << "delayloop 500ms 16MHz" << std::endl << std::endl;
 
 	std::cout << "Shortened output" << std::endl;
-	std::cout << "assembly-delayloop 500ms 16MHz -s" << std::endl << std::endl;
+	std::cout << "delayloop 500ms 16MHz -s" << std::endl << std::endl;
 
 	std::cout << "Input clock cycles instead of time and frequency" << std::endl;
-	std::cout << "assembly-delayloop -c 16000000" << std::endl << std::endl;
+	std::cout << "delayloop -c 16000000" << std::endl << std::endl;
 
 	std::cout << "Specify the argument for time and set starting register to 20" << std::endl;
-	std::cout << "assembly-delayloop 16MHz -t 500ms -r 20" << std::endl << std::endl;
+	std::cout << "delayloop 16MHz -t 500ms -r 20" << std::endl << std::endl;
 }
 
 std::string generateOutput(const std::vector<unsigned long> &a) {
