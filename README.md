@@ -30,7 +30,7 @@ sudo ./install.sh
 ## Examples
 
 ```
-assembly-delayloop 500ms 16MHz
+delayloop 500ms 16MHz
 ```
 returns
 ```
@@ -48,7 +48,7 @@ asm volatile (
 ```
 
 ```
-assembly-delayloop 500ms 16MHz -s
+delayloop 500ms 16MHz -s
 ```
 returns
 ```
@@ -56,7 +56,7 @@ returns
 ```
 
 ```
-assembly-delayloop -c 16000000
+delayloop -c 16000000
 ```
 returns
 ```
@@ -76,7 +76,7 @@ asm volatile (
 ```
 
 ```
-assembly-delayloop 16MHz -t 500ms -r 20
+delayloop 16MHz -t 500ms -r 20
 ```
 returns
 ```
