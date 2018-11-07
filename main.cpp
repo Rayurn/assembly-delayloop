@@ -131,7 +131,7 @@ int main(int argc, char **argv){
 	double time          = 0;
 	double frequency     = 0;
 
-	std::regex pattern = std::regex("([0-9]+\\.?[0-9]*)([^0-9(?!Hz|s|min|h|d)]?)(Hz|s|min|h|d)?");
+	std::regex pattern = std::regex("([0-9]+\\.?[0-9]*)(f|p|n|u|m(?!in)|k|M|G|T|P?)(Hz|s|min|h|d)?");
 	std::cmatch cmatchTime;
 	std::cmatch cmatchFreq;
 
@@ -200,7 +200,7 @@ int main(int argc, char **argv){
 	}
 
 	if (cFlag == 1 && (tFlag == 1 || fFlag == 1)){
-		std::cerr << "Invalid command, see 'assembly-delayloop --help' for usage" << std::endl;
+		std::cerr << "Unrecognised command, see 'assembly-delayloop --help' for usage" << std::endl;
 		exit(1);
 	}
 
