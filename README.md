@@ -26,6 +26,7 @@ cd assembly-delayloop
 make
 sudo ./install.sh
 ```
+`sudo ./install.sh` is not required, but enables you to run this tool from anywhere on your system. 
 
 ## Examples
 
