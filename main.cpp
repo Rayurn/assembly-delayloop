@@ -122,6 +122,10 @@ void verify(const std::vector<unsigned long> &a, unsigned long cycles) {
 }
 
 int main(int argc, char **argv){
+	if (argc == 1) {
+		std::cerr << "Unrecognised command, see 'assembly-delayloop --help' for usage" << std::endl;
+		exit(1);
+	}
 
 	unsigned long cycles = 0;
 	double time          = 0;
@@ -191,7 +195,7 @@ int main(int argc, char **argv){
 				rFlag = std::stoi(optarg);
 				break;
 			default:
-				std::cerr << "Invalid command, see 'assembly-delayloop --help' for usage" << std::endl;
+				std::cerr << "Unrecognised command, see 'assembly-delayloop --help' for usage" << std::endl;
 				exit(1);
 		}
 	}
